@@ -30,7 +30,7 @@ Alternatively, [this blog post](https://spot.io/blog/kubernetes-tutorial-success
   * For small-scale deployments, [it's advisable to assign all three roles to every pod](https://discuss.elastic.co/t/what-is-difference-between-master-node-and-data-node-etc/109896/4), which is the default setting of the Helm chart.
   * I doubt that a Raspberry Pi cluster will ever grow large enough to justify role separation.
 * By default Elasticsearch will use 2GB of memory and 30GB of persistent storage **per pod**. This is a rather large memory commitment for 8GB nodes, and perhaps anticipates a scale that I'm unlikely to reach. The `values.yaml` I've configured here reduces the memory limits to 512MB, and similarly reduces the JVM stack size.
-  * Storage is cheaper than memory, so I'll leave the 3*30GB volume claim as is.
+  * Storage is cheaper than memory, so I'll leave the 30GB volume claim as is.
   * I've borrowed some of this configuration from [the recommended values for installing Elasticsearch on microk8s](https://github.com/elastic/helm-charts/blob/7.9/elasticsearch/examples/microk8s/values.yaml).
   * I've also reduced the number of replicas to 2. I'm sceptical that 3 replicas are needed for such a small-scale deployment (3 worker nodes, 8GB of memory each). If I turn out to be wrong, then it's easy to scale up.
 * I've noticed a tendency for applications that depend on Elasticsearch to set up an instance of Elasticsearch when installed through Helm. I have to watch out for this, as there is no justification for more than one Elasticsearch cluster on this Kubernetes cluster.
