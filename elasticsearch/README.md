@@ -1,4 +1,16 @@
-# Setting up Elasticsearch
+# Elasticsearch
+
+## What is this and what is it used for?
+
+Elasticsearch is billed as a "search and analytics engine", [as well as a document store](https://www.elastic.co/guide/en/elasticsearch/reference/master/documents-indices.html). "Document store" here seems to be a deliberately general term, but my use case is concrete: I want to be able to store log data from every container running on the cluster. Elasticsearch will store that data, and let me query it. In this case it forms part of the **EFK** stack:
+
+* _Elasticsearch_ is a search engine, also used for storage.
+* _FluentD_ extracts, parses, and filter log data, before sending it off to Elasticsearch.
+* _Kibana_ visualises the log data.
+
+An alternative to this is the **ELK** stack, which replaces FluentD with an application called _Logstash_. My choice of stack here is arbitrary, and I don't know enough to have a preference for either stack.
+
+## Setting up Elasticsearch
 
 As always, [the simplest way to install Elasticsearch is through Helm](https://artifacthub.io/packages/helm/elastic/elasticsearch). The default values assume a scale of cluster that isn't well-suited to a few Raspberry Pis. The `values.yaml` configuration here reduces the memory claim for each pod from 2GB to 512MB. It also reduces the number of replicas from 3 to 2.
 
@@ -27,3 +39,4 @@ Alternatively, [this blog post](https://spot.io/blog/kubernetes-tutorial-success
 * Why does each pod have its own persistent volume claim? It's perfectly reasonable to ask then where the data for Elasticsearch is being held. Is it duplicated across two PV claims? Are the two PV claims treated as one combined volume when querying Elasticsearch?
   * Supposedly, [replica sets in a deployment share a PV claim, whereas each replica pod in a stateful set has its own PV claim](https://stackoverflow.com/a/53999395/8456369).
   * Suppose we want to scale down by reducing the number of replicas. How do we consolidate the terminating pods' persistent volume claims into those of the remaining pods?
+* Is Elasticsearch technically a NoSQL database? Is that a naïve thing to ask?
