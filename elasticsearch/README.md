@@ -10,7 +10,7 @@ Elasticsearch is billed as a "search and analytics engine", [as well as a docume
 
 An alternative to this is the **ELK** stack, which replaces FluentD with an application called _Logstash_. My choice of stack here is arbitrary, and I don't know enough to have a preference for either stack.
 
-## Setting up Elasticsearch
+## How do I install it?
 
 As always, [the simplest way to install Elasticsearch is through Helm](https://artifacthub.io/packages/helm/elastic/elasticsearch). The default values assume a scale of cluster that isn't well-suited to a few Raspberry Pis. The `values.yaml` configuration here reduces the memory claim for each pod from 2GB to 512MB. It also reduces the number of replicas from 3 to 2.
 
@@ -23,6 +23,16 @@ Helm install elasticsearch \
 ```
 
 Alternatively, [this blog post](https://spot.io/blog/kubernetes-tutorial-successful-deployment-of-elasticsearch/) offers a more in-depth approach. Be aware that the `all-in-one.yaml` file is over 3000 lines long!
+
+## What's the result?
+
+The installation sets up service with two ports:
+* 9200 is used for HTML communication with Elasticsearch, and
+* 9300 is used as a "transport port", presumably for communication with inputs to the store.
+
+Both values are configurable; refer to the values on [the Helm chart page](https://artifacthub.io/packages/helm/elastic/elasticsearch), or [the template for `service.yaml`](https://github.com/elastic/helm-charts/blob/master/elasticsearch/templates/service.yaml).
+
+It appears as though the Helm chart also allows for opening an _ingress_ that would allow external traffic to access store. Since I will be hosting Elasticsearch on the same cluster that it is monitoring, I don't see a need for this. That's not a good idea, by the way: systems shouldn't monitor themselves. Given the nature of my cluster as a learning exercise, I don't think I'll stress about this.
 
 ## Notes
 * Elasticsearch uses terminology like "cluster" and "node" that conflict with Kubernetes terminology.
