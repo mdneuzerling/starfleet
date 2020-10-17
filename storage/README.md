@@ -2,7 +2,7 @@
 
 ## What is this and what is it used for?
 
-deployments that run _stateful_ services like databases have data that must persist beyond the life of the pod. This kind of data storage requires a _persistent volume_. The pods can make a _persistent volume claim_ for a given amount of storage, and Kubernetes will assign that amount from the available persistent volumes.
+Deployments that run _stateful_ services like databases have data that must persist beyond the life of any single pod. This kind of storage requires a _persistent volume_. Pods can make a _persistent volume claim_ for a given amount of storage, and Kubernetes will assign that amount from the available persistent volumes.
 
 ## How do I install it?
 
