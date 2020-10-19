@@ -4,7 +4,7 @@ metadata:
   name: cargo-bay
 spec:
   capacity:
-    storage: 480Gi
+    storage: 417G
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
