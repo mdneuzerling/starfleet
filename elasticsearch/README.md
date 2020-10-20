@@ -17,7 +17,8 @@ As always, [the simplest way to install Elasticsearch is through Helm](https://a
 With Helm 3:
 
 ```bash
-Helm install elasticsearch \
+helm repo add elastic https://helm.elastic.co
+helm install elasticsearch \
     --version 7.9.2 elastic/elasticsearch \
     --values https://raw.githubusercontent.com/mdneuzerling/starfleet/main/elasticsearch/values.yaml
 ```
