@@ -4,19 +4,10 @@ metadata:
   name: memory-gamma
 spec:
   capacity:
-    storage: 30G
-  volumeMode: Filesystem
+    storage: 30G 
   accessModes:
-  - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: local-storage
-  local:
+  - ReadWriteOnce 
+  nfs: 
     path: /media/cargobay/memory-gamma
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - starfleet
+    server: 192.168.2.50 
+  persistentVolumeReclaimPolicy: Retain
