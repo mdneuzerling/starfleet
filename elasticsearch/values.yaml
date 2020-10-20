@@ -21,3 +21,4 @@ volumeClaimTemplate:
     requests:
       storage: 30Gi
   storageClassName: ""
+
