@@ -20,4 +20,4 @@ volumeClaimTemplate:
   resources:
     requests:
       storage: 30Gi
-  storageClass: local-storage
+  storageClassName: local-storage
