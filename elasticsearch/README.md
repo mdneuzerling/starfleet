@@ -12,7 +12,7 @@ An alternative to this is the **ELK** stack, which replaces FluentD with an appl
 
 ## How do I install it?
 
-As always, [the simplest way to install Elasticsearch is through Helm](https://artifacthub.io/packages/helm/elastic/elasticsearch). The default values assume a scale of cluster that isn't well-suited to a few Raspberry Pis. The `values.yaml` configuration here reduces the memory claim for each pod from 2GB to 512MB. It also reduces the number of replicas from 3 to 2.
+As always, [the simplest way to install Elasticsearch is through Helm](https://artifacthub.io/packages/helm/elastic/elasticsearch). The default values assume a scale of cluster that isn't well-suited to a few Raspberry Pis. The `values.yaml` configuration here reduces the memory claim for each pod from 2GB to 512MB.
 
 With Helm 3:
 
