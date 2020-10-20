@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: cargo-bay
+  name: memory-gamma
 spec:
   capacity:
-    storage: 417G
+    storage: 30G
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /media/cargobay
+    path: /media/cargobay/memory-gamma
   nodeAffinity:
     required:
       nodeSelectorTerms:

@@ -10,21 +10,20 @@ The settings in these YAML files can be directly applied to the cluster. The val
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/StorageClass.yaml
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/PersistentVolume.yaml
+kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-alpha.yaml
+kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-beta.yaml
+kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-gamma.yaml
+kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-delta.yaml
 ```
 
-Afterwards, I changed the default storage class to this one. Run `kubectl get storageclass` to list all storage classes. For me, the default was "local-path".
 
-```
-kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
-kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-```
 
 Despite this change of default, I'll still make an endeavour to set values so that persistent volume claims will target local-storage.
 
 ## Notes
 
-* To continue the Star Trek theme, I'm calling my sole 480GB persistent volume _cargo-bay_.
+* It took me a while to realise this: each persistent volume claim needs its own persistent volume (at least, with "ReadWriteOnce"). A claim will choose "the most appropriate" volume --- I _hope_ that this means the smallest volume meeting the storage class and capacity. requirements.
+* To continue the Star Trek theme, I'll be calling my persistent volumes
 * In general, persistent volumes are cloud storage. Here, I'm using an SSD as a _local persistent volume_.
     * Local persistent volumes [reached general availability in 2019](https://kubernetes.io/blog/2019/04/04/kubernetes-1.14-local-persistent-volumes-ga/).
     * I'm using a single SSD. To mitigate the damage done by drive failure, I should be using two in a RAID.
