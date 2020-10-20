@@ -12,7 +12,7 @@ resources:
     memory: "512M"
     
 # Default is 3
-replicas: 2
+replicas: 3
 
 # Default volume claim, but made explicit here in case I choose to change it
 volumeClaimTemplate:
