@@ -13,6 +13,15 @@ kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/s
 kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/PersistentVolume.yaml
 ```
 
+Afterwards, I changed the default storage class to this one. Run `kubectl get storageclass` to list all storage classes. For me, the default was "local-path".
+
+```
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass local-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
+Despite this change of default, I'll still make an endeavour to set values so that persistent volume claims will target local-storage.
+
 ## Notes
 
 * To continue the Star Trek theme, I'm calling my sole 480GB persistent volume _cargo-bay_.
