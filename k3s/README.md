@@ -1,8 +1,12 @@
 # k3s
 
+This covers the first steps of setting up the cluster, from flashing the operating system to installing a Kubernetes distribution.
+
 ## What is this and what is it used for?
 
+Kubernetes is a bit big for a Raspberry Pi. It needs 2GB of memory on the primary node hosting the control plane, and 1GB on the other nodes. [K3s is a lightweight Kubernetes distribution offered by Rancher](https://k3s.io/). [It requires only 512MB of memory per node, and is a bit easier on the CPU requirements as well](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/).
 
+Apart from the reduced requirements, k3s is a fully compliant Kubernetes distribution --- if it runs on full Kubernetes, it runs on k3s. Some components are stripped out to make the installation leaner, but these aren't relevant to my use-case. For example, it's not currently possible to run multiple server nodes on k3s, but that isn't a restriction for my Raspberry Pi cluster.
 
 ## How do I install it?
 
@@ -103,4 +107,21 @@ To                         Action      From
 22/tcp                     ALLOW       192.168.2.0/24
 8472/udp                   ALLOW       192.168.2.0/24
 10250/tcp                  ALLOW       192.168.2.0/24
+```
+
+## Creating a new user on the new machine
+
+The following steps need to be performed for each machine, that is, for each host name. Repeating commands is tedious, so I used tmux to synchronise four terminals together.
+
+First I accessed the machine with `SSH ubuntu@hostname`. The "authenticity of host... can't be established" warning is expected, as this is the first time I'm SSHing into the server. The default password is "ubuntu", and I was prompted to change this. After changing the password, I reconnected with SSH.
+
+I wanted to add a non-root user so I couldn't accidentally do something bad. Actually, in this case, I'm not sure this is necessary: the "ubuntu" user seems to have the same privileges as the "mdneuzerling" user that I created. But it can't do any harm to create a different user.
+
+I created my new user with the `sudo adduser mdneuzerling` command. I was prompted to enter a password. I was also prompted to enter various bits of information, like "Room Number", but I just clicked "Enter" to skip through this. I then granted my new user administrative privileges with `usermod -aG sudo mdneuzerling`.
+
+At this point I could either exit the SSH connection and connect to `mdneuzerling@hostname`, or type the following commands to change users and the working directory:
+
+```
+su mdneuzerling
+cd ~
 ```
