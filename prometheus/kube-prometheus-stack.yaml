@@ -20,12 +20,12 @@ prometheus:
     ## The remote_read spec configuration for Prometheus.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#remotereadspec
     remoteRead: 
-      - url: "http://influxdb.default.svc.cluster.local/api/v1/prom/read?db=prometheus"
+      - url: "http://influxdb.default.svc.cluster.local:8086/api/v1/prom/read?db=prometheus"
 
     ## The remote_write spec configuration for Prometheus.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#remotewritespec
     remoteWrite: 
-      - url: "http://influxdb.default.svc.cluster.local/api/v1/prom/write?db=prometheus"
+      - url: "http://influxdb.default.svc.cluster.local:8086/api/v1/prom/write?db=prometheus"
 
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/storage.md
@@ -97,8 +97,8 @@ prometheus:
       additionalDataSources: 
         - name: influxdb
           type: influxdb
-          access: proxy
-          url: https://influxdb.default.svc.cluster.local:8086
+          access: server
+          url: http://influxdb.default.svc.cluster.local:8086
           # basicAuth: true
           # basicAuthPassword: pass
           # basicAuthUser: daco
