@@ -1,8 +1,12 @@
 # k3s
 
+This covers the first steps of setting up the cluster, from flashing the operating system to installing a Kubernetes distribution.
+
 ## What is this and what is it used for?
 
+Kubernetes is a bit big for a Raspberry Pi. It needs 2GB of memory on the primary node hosting the control plane, and 1GB on the other nodes. [K3s is a lightweight Kubernetes distribution offered by Rancher](https://k3s.io/). [It requires only 512MB of memory per node, and is a bit easier on the CPU requirements as well](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/).
 
+Apart from the reduced requirements, k3s is a fully compliant Kubernetes distribution --- if it runs on full Kubernetes, it runs on k3s. Some components are stripped out to make the installation leaner, but these aren't relevant to my use-case. For example, it's not currently possible to run multiple server nodes on k3s, but that isn't a restriction for my Raspberry Pi cluster.
 
 ## How do I install it?
 
@@ -42,3 +46,82 @@ A Raspberry Pi 4 can output a total of 1.4A through its USB ports, which is _pro
 I initially followed [this guide](https://www.tomshardware.com/how-to/boot-raspberry-pi-4-usb) up to and including step 13. This required a copy of Raspberry Pi OS flashed to a microSD card. I have a few spare cards lying around, so I flashed a 32GB card with this operating system to keep as a backup.
 
 Afterwards, I removed the microSD card and plugged in my Ubuntu hard drive. Unfortunately, it still wouldn't boot! My suspicion is that this would have been sufficient to boot the official Raspberry Pi OS via USB, but my Ubuntu operating system needed a little more tinkering. Fortunately, [the steps in this guide](https://www.raspberrypi.org/forums/viewtopic.php?t=281152) were enough to encourage the Pi to boot from my Ubuntu SSD. I may need to repeat them in the future if I ever upgrade the operating system, but that's a problem for future David.
+
+## Firewalls
+
+I had a lot of firewall trouble when I was setting up various services on the cluster --- [trouble that could have been saved had I just read the manual](https://rancher.com/docs/rancher/v2.x/en/installation/requirements/ports/). If I could go back in time, I would tell myself the following:
+
+* Open up the SSH port (22/TCP) on all nodes
+* Open up the Flannel VXLAN port (8472/UDP) on all nodes
+* Open up the metrics server port (10250/TCP) on all nodes
+* Open up the Kubernetes port (6443/TCP) on the server node only
+* Open up the NFS (Network File System) port (2049) on the server node only
+
+The tool I used for this is Uncomplicated Firewall (UFW), which I believe is installed but not enabled by default on Ubuntu server. It's very import to open up the SSH port **before** enabling the firewall, otherwise the machine will no longer accept SSH connections.
+
+When I connect a machine to my network, the router's DHCP server assigns an IP address of the form 192.168.2.x. The CIDR notation for this is 192.168.2.0/24. This range is reserved for local IP addresses only, so by opening up firewall access to IP addresses in this range only I can restrict access from the outside world. My router also has a firewall which should be blocking access to these ports from the outside world as well.
+
+The NFS ports will allow me to serve a network file system from the Raspberry Pi that hosts the server node. I'll use this as persistent storage for the pods in the cluster. I don't want this storage to visible to the local network in general, so I'll restrict its access only to the four static IP addresses I assigned to the nodes. I'm treating these four IP addresses as a "sub-range" of 192.168.2.0/24 that's reserved for the Kubernetes cluster.
+
+I SSH'd into the Raspberry Pi hosting the server node and implemented the rules like so:
+
+```
+sudo ufw allow from 192.168.2.50 to any port nfs
+sudo ufw allow from 192.168.2.51 to any port nfs
+sudo ufw allow from 192.168.2.52 to any port nfs
+sudo ufw allow from 192.168.2.53 to any port nfs
+sudo ufw allow from 192.168.2.0/24 to any port ssh
+sudo ufw allow proto tcp from 192.168.2.0/24 to any port 6443
+sudo ufw allow proto udp from 192.168.2.0/24 to any port 8472
+sudo ufw allow proto tcp from 192.168.2.0/24 to any port 10250
+```
+
+Afterwards I enabled the firewall with `sudo ufw enable`. I can check that the firewall is running with `sudo ufw status`:
+
+```
+To                         Action      From
+--                         ------      ----
+2049                       ALLOW       192.168.2.50
+2049                       ALLOW       192.168.2.51
+2049                       ALLOW       192.168.2.52
+2049                       ALLOW       192.168.2.53
+22/tcp                     ALLOW       192.168.2.0/24
+6443/tcp                   ALLOW       192.168.2.0/24
+8472/udp                   ALLOW       192.168.2.0/24
+10250/tcp                  ALLOW       192.168.2.0/24
+```
+
+I repeated the process on each of the Raspberry Pis hosting the worker nodes, implementing only the necessary rules:
+
+```
+sudo ufw allow from 192.168.2.0/24 to any port ssh
+sudo ufw allow proto udp from 192.168.2.0/24 to any port 8472
+sudo ufw allow proto tcp from 192.168.2.0/24 to any port 10250
+```
+
+And after `sudo ufw enable` and `sudo ufw status`:
+
+```
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       192.168.2.0/24
+8472/udp                   ALLOW       192.168.2.0/24
+10250/tcp                  ALLOW       192.168.2.0/24
+```
+
+## Creating a new user on the new machine
+
+The following steps need to be performed for each machine, that is, for each host name. Repeating commands is tedious, so I used tmux to synchronise four terminals together.
+
+First I accessed the machine with `SSH ubuntu@hostname`. The "authenticity of host... can't be established" warning is expected, as this is the first time I'm SSHing into the server. The default password is "ubuntu", and I was prompted to change this. After changing the password, I reconnected with SSH.
+
+I wanted to add a non-root user so I couldn't accidentally do something bad. Actually, in this case, I'm not sure this is necessary: the "ubuntu" user seems to have the same privileges as the "mdneuzerling" user that I created. But it can't do any harm to create a different user.
+
+I created my new user with the `sudo adduser mdneuzerling` command. I was prompted to enter a password. I was also prompted to enter various bits of information, like "Room Number", but I just clicked "Enter" to skip through this. I then granted my new user administrative privileges with `usermod -aG sudo mdneuzerling`.
+
+At this point I could either exit the SSH connection and connect to `mdneuzerling@hostname`, or type the following commands to change users and the working directory:
+
+```
+su mdneuzerling
+cd ~
+```
