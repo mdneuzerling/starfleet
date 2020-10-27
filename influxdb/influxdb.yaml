@@ -22,7 +22,7 @@ resources:
     cpu: 1
 
 initScripts:
-  enabled: false
+  enabled: true
   scripts:
     init.iql: |+
       CREATE DATABASE "prometheus"
