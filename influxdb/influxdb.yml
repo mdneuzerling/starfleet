@@ -1,0 +1,28 @@
+# influxDB
+
+# helm repo add influxdata https://helm.influxdata.com/
+# helm install --set persistence.storageClass="" --set persistence.size=50G --set image.tag=1.8 influxdb influxdata/influxdb
+
+image:
+  tag: 1.8
+
+persistence:
+  enabled: true
+  annotations:
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 50G
+
+resources: 
+  requests:
+    memory: 256Mi
+    cpu: 0.1
+  limits:
+    memory: 1Gi
+    cpu: 1
+
+initScripts:
+  enabled: false
+  scripts:
+    init.iql: |+
+      CREATE DATABASE "prometheus"
