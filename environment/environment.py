@@ -70,8 +70,10 @@ def record_cpu_temperature():
     We maintain a list of the most recent 10 temperature measurements
     to dampen rapid changes.
     """
+    global cpu_temps
     process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
     output, _error = process.communicate()
+    output = output.decode("UTF-8")
     current_cpu_temp = float(output[output.index('=') + 1:output.rindex("'")])
     cpu_temps.append(current_cpu_temp)
     if len(cpu_temps) > SMOOTH_SIZE:
