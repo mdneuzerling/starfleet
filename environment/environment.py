@@ -16,6 +16,9 @@ Additional components:
 from flask import Flask, Response
 from waitress import serve
 from prometheus_client import Gauge, generate_latest
+from subprocess import PIPE, Popen
+from time import sleep
+
 from smbus2 import SMBus
 from bme280 import BME280 # pimoroni-bme280 on PyPi
 from ltr559 import LTR559
@@ -31,6 +34,10 @@ from enviroplus.noise import Noise
 # Melbourne according to the Australian Bureau of Meterology.
 LOCAL_QNH = 1008
 
+# Variables affecting temperature compensation:
+COMPENSATING_FACTOR = 0.6  # Smaller numbers adjust temp down, vice versa
+SMOOTH_SIZE = 10  # Dampens jitter due to rapid CPU temp changes
+
 app = Flask(__name__)
 
 
@@ -45,11 +52,44 @@ humidity = Gauge("humidity", "humidity as a percentage")
 pressure = Gauge("pressure", "pressure in hPa")
 altitude = Gauge("altitude", "altitude in metres above sea level")
 
+# Compensating for temperature
+#
+# We need to adjust temperature measurements down to compensate 
+# for the effect of the Pi's CPU. This code adapted from Pimorino
+# examples, also released under an MIT licence:
+# https://github.com/pimoroni/bme280-python/
+
 bus = SMBus(1)
 bme280 = BME280(i2c_dev=bus)
 
+cpu_temps = []
+
+def record_cpu_temperature():
+    """Append the current CPU temperature to cpu_temps
+
+    We maintain a list of the most recent 10 temperature measurements
+    to dampen rapid changes.
+    """
+    process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
+    output, _error = process.communicate()
+    current_cpu_temp = float(output[output.index('=') + 1:output.rindex("'")])
+    cpu_temps.append(current_cpu_temp)
+    if len(cpu_temps) > SMOOTH_SIZE:
+        cpu_temps = cpu_temps[1:]
+
+# Populate the initial CPU temperatures
+for i in range(SMOOTH_SIZE):
+    sleep(0.1)
+    record_cpu_temperature()
+
+def get_compensated_temperature():
+    smoothed_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
+    raw_temp = bme280.get_temperature()
+    comp_temp = raw_temp - ((smoothed_cpu_temp - raw_temp) / COMPENSATING_FACTOR)
+    return comp_temp
+
 def update_weather():
-    temperature.set(bme280.get_temperature())
+    temperature.set(get_compensated_temperature())
     humidity.set(bme280.get_humidity())
     pressure.set(bme280.get_pressure())
     altitude.set(bme280.get_altitude(qnh=LOCAL_QNH))
