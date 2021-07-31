@@ -35,6 +35,8 @@ I also plugged the Raspberry Pis in one at a time and assigned them each a stati
 
 ## (Optional) Booting from USB
 
+**UPDATE 2021-07-31: If you're reading this in 2021, [this guide](https://jamesachambers.com/raspberry-pi-4-ubuntu-20-04-usb-mass-storage-boot-guide/) is a better option than the links below.**
+
 MicroSD is not a great choice of media for a bootable drive. They're slow and flimsy --- occasionally failing within months. For the worker nodes this high failure rate is only an annoyance: I would be able to get a new card, copy the contents from another worker node, and off I go. But for the primary node with the control plane, I wanted a bit more stability.
 
 A better option is to boot from an external SSD connected via USB. A 120GB SSD and an external caddy together cost about AUD 70. Despite the label on the button, the Raspberry Pi Imager can flash an SSD just as easily as it can a MicroSD.
