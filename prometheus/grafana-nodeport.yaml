@@ -10,7 +10,8 @@ spec:
   # You could also use NodePort to expose the service at a randomly-generated port
   type: NodePort
   ports:
-  - nodePort: 30001
+  - port: 30001
+    nodePort: 3001
     targetPort: 3000
     name: http
     protocol: TCP
