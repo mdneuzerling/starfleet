@@ -1,10 +1,5 @@
-# influxDB
-
 # helm repo add influxdata https://helm.influxdata.com/
-# helm install --set persistence.storageClass="" --set persistence.size=50G --set image.tag=1.8 influxdb influxdata/influxdb
-
-image:
-  tag: 1.8
+# helm repo update
 
 persistence:
   enabled: true
