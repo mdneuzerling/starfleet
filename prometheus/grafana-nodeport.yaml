@@ -10,9 +10,10 @@ spec:
   # You could also use NodePort to expose the service at a randomly-generated port
   type: NodePort
   ports:
-  - port: 30001
-    protocol: TCP
+  - nodeport: 30001
     targetPort: 3000
+    name: http
+    protocol: TCP
   selector:
     app.kubernetes.io/instance: kube-prometheus-stack
     app.kubernetes.io/name: grafana
