@@ -12,5 +12,5 @@ spec:
     name: http
     protocol: TCP
   selector:
-    app.kubernetes.io/instance: kube-prometheus-stack
     app.kubernetes.io/name: prometheus
+    prometheus: kube-prometheus-stack-prometheus
