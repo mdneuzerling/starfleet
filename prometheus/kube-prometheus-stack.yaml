@@ -42,7 +42,7 @@ prometheus:
     ##
     additionalScrapeConfigs:
       - job_name: "environment"
-        scrape_interval: 5s
+        scrape_interval: 10s
         static_configs:
         - targets: ["192.168.1.149:80"] 
       
