@@ -6,19 +6,12 @@ Deployments that run _stateful_ services like databases have data that must pers
 
 ## How do I install it?
 
-The settings in these YAML files can be directly applied to the cluster. The values in `StorageClass.yaml` are generic, but the values in `PersistentVolume.yaml` are bespoke to my setup, and will fail on other clusters. I recommend modifying `spec.local.path`, `spec.capacity.storage`, the hostname to match in `spec.nodeAffinity`, as well as metadata fields.
-
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/StorageClass.yaml
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-alpha.yaml
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-beta.yaml
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-gamma.yaml
-kubectl apply -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/storage/memory-delta.yaml
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+    --set nfs.server=192.168.2.50 \
+    --set nfs.path=/media/cargobay
 ```
-
-
-
-Despite this change of default, I'll still make an endeavour to set values so that persistent volume claims will target local-storage.
 
 ## Notes
 
