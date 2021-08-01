@@ -1,6 +1,9 @@
 # helm repo add influxdata https://helm.influxdata.com/
 # helm repo update
 
+image:
+  tag: latest
+
 persistence:
   enabled: true
   storageClassName: "managed-nfs-storage"
