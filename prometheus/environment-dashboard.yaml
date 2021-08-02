@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    grafana_dashboard: "1"
+  name: environment
+data:
+  environment.json: |-
 {
   "annotations": {
     "list": [
