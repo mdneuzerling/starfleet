@@ -18,9 +18,11 @@ With Helm 3:
 
 ```bash
 helm repo add elastic https://helm.elastic.co
-helm install elasticsearch \
-    --version 7.9.2 elastic/elasticsearch \
-    --values https://raw.githubusercontent.com/mdneuzerling/starfleet/main/elasticsearch/values.yaml
+helm repo update
+
+helm install \
+    -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/elasticsearch/values.yaml \
+    elasticsearch elastic/elasticsearch 
 ```
 
 Alternatively, [this blog post](https://spot.io/blog/kubernetes-tutorial-successful-deployment-of-elasticsearch/) offers a more in-depth approach. Be aware that the `all-in-one.yaml` file is over 3000 lines long!
