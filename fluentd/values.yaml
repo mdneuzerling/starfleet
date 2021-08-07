@@ -27,3 +27,13 @@ env:
 metrics:
   serviceMonitor:
     enabled: false
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 100
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
