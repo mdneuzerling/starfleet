@@ -1,3 +1,25 @@
+resources: {}
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 512Mi
+env:
+- name: FLUENT_ELASTICSEARCH_HOST
+  value: "elasticsearch-master.default.svc.cluster.local"
+- name: FLUENT_ELASTICSEARCH_PORT
+  value: "9200"
+- name: FLUENT_ELASTICSEARCH_USER
+  valueFrom:
+    secretKeyRef:
+      name: elastic-credentials
+      key: username
+- name: FLUENT_ELASTICSEARCH_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: elastic-credentials
+      key: password
 metrics:
   serviceMonitor:
     enabled: false
