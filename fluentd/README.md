@@ -8,5 +8,5 @@ helm install \
     fluentd bitnami/fluentd
 
 kubectl apply \
-    -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/fluentd/elasticsearch-output.yaml.yaml
+    -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/fluentd/elasticsearch-output.yaml
 ```
