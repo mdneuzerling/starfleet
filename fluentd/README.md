@@ -7,6 +7,6 @@ helm install \
     -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/fluentd/values.yaml \
     fluentd bitnami/fluentd
 
-helm apply \
+kubectl apply \
     -f https://raw.githubusercontent.com/mdneuzerling/starfleet/main/fluentd/elasticsearch-output.yaml.yaml
 ```
