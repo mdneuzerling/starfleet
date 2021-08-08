@@ -1,6 +1,6 @@
 image:
   repository: "fluent/fluentd-kubernetes-daemonset"
-  tag: "v1.13-debian-gcs-arm64-1"
+  tag: "v1.13-debian-elasticsearch7-arm64-1"
 
 resources:
   requests:
