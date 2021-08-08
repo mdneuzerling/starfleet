@@ -1,0 +1,22 @@
+elasticsearchHosts: "http://elasticsearch-master.default.svc.cluster.local:9200"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+extraEnvs:
+  - name: ELASTICSEARCH_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: username
+  - name: ELASTICSEARCH_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic-credentials
+        key: password
+    
