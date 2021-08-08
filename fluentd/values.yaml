@@ -28,6 +28,16 @@ metrics:
   serviceMonitor:
     enabled: false
 
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+
 readinessProbe:
   httpGet:
     path: /metrics
@@ -36,4 +46,4 @@ readinessProbe:
   periodSeconds: 10
   timeoutSeconds: 1
   successThreshold: 1
-  failureThreshold: 5
+  failureThreshold: 3
